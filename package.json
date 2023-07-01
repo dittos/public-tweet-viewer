@@ -1,0 +1,19 @@
+{
+  "name": "public-tweet-viewer",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler publish",
+    "start": "wrangler pages dev public"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230419.0",
+    "typescript": "^5.0.4",
+    "wrangler": "^2.20.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "preact": "^10.15.1",
+    "preact-render-to-string": "^6.1.0"
+  }
+}
