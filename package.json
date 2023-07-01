@@ -6,8 +6,8 @@
     "deploy": "wrangler pages publish public",
     "dev": "run-p dev:*",
 		"dev:wrangler": "wrangler pages dev public",
-		"dev:esbuild": "esbuild --bundle src/[[catchall]].js --format=esm --watch --outfile=functions/[[catchall]].js",
-		"build": "esbuild --bundle src/[[catchall]].js --format=esm --outfile=functions/[[catchall]].js"
+		"dev:esbuild": "esbuild --bundle src/[user]/[[catchall]].js --format=esm --watch --outfile=functions/[user]/[[catchall]].js",
+		"build": "esbuild --bundle src/[user]/[[catchall]].js --format=esm --outfile=functions/[user]/[[catchall]].js"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230419.0",

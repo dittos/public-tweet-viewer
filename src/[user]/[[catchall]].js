@@ -14,28 +14,40 @@ function render(oembedResponse) {
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width">
 		${renderToStaticMarkup([
 			h("title", null, [oembedResponse.author_name, ': "', content, '" / Twitter']),
 			h("meta", {property: "og:site_name", content: "Twitter"}),
 			h("meta", {property: "og:title", content: oembedResponse.author_name}),
 			h("meta", {property: "og:description", content: content}),
 		])}
+		<style>
+			.guide {
+				text-align: center;
+			}
+			.guide a {
+				color: rgb(0, 111, 214);
+				display: inline-block;
+				text-decoration: none;
+				padding: 10px;
+				font-size: 14px;
+				font-weight: bold;
+			}
+		</style>
 	</head>
 	<body>
+		<div class="guide">
+			<a href="/">🔗 Make public link to tweets like this</a>
+		</div>
 		${oembedResponse.html}
 	</body>
 </html>`
 }
 
 export async function onRequest(context) {
-	let url = context.params.catchall
-	if (!url) {
-		return new Response("index")
-	}
+	let url = context.params.catchall || []
+	url = [context.params.user].concat(url)
 	url = url.join('/')
-	if (url === 'favicon.ico') {
-		return context.env.ASSETS.fetch(context.request)
-	}
 	if (url.indexOf('twitter.com') !== 0) {
 		url = 'twitter.com/' + url
 	}
