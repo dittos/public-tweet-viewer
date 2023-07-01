@@ -11,6 +11,7 @@
 				max-width: 100%;
 
 				font-size: 14px;
+				font-family: sans-serif;
 				line-height: 1.5;
 			}
 			h1 {
@@ -25,6 +26,44 @@
 			}
 			a {
 				color: #666;
+			}
+			.convert {
+				text-align: center;
+				font-size: 1.1rem;
+				padding-bottom: 10px;
+				display: flex;
+				flex-direction: column;
+			}
+			.convert input {
+				font-size: 1rem;
+				padding: 0.5rem;
+				text-align: center;
+			}
+			.result {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.result-url {
+				letter-spacing: -0.02rem;
+			}
+			.copy {
+				margin-left: 0.5rem;
+				display: inline-block;
+				padding: 0.5rem 1rem;
+				background-color: blue;
+				color: #fff;
+				font-size: 0.9rem;
+				font-weight: bold;
+				border-radius: 20px;
+				cursor: pointer;
+				flex: none;
+			}
+			.copied {
+				font-size: 0.9rem;
+				font-weight: bold;
+				color: blue;
+				padding-top: 5px;
 			}
 			.footer {
 				margin-top: 30px;
@@ -44,6 +83,33 @@
 				&darr;<br>
 				https://<b>twit.pages.dev</b>/jack/status/20
 			</p>
+			<p>Use the form below to automatically convert the URL.</p>
+			<div class="convert">
+				<script>
+					function update(url) {
+						url = url.trim()
+						document.getElementById('result-url').innerHTML = new URL(url).pathname
+					}
+					function copyLink() {
+						const path = document.getElementById('result-url').innerHTML
+						navigator.clipboard.writeText(window.location.protocol + "//" + window.location.host + path).then(
+							function() {
+								document.getElementById('copied').style.opacity = 1
+								setTimeout(function() {
+									document.getElementById('copied').style.opacity = 0
+								}, 3000)
+							}
+						)
+					}
+				</script>
+				<input type="text" placeholder="Paste original URL here" oninput="update(this.value)"><br>
+				&darr;<br>
+				<div class="result">
+					<div class="result-url">https://<b>twit.pages.dev</b><span id="result-url">/...</span></div>
+					<span class="copy" onclick="copyLink()">Copy link</span>
+				</div>
+				<div class="copied" id="copied" style="opacity: 0">Copied!</div>
+			</div>
 
 			<h1>Why?</h1>
 			<p>Because <a href="https://edition.cnn.com/2023/06/30/tech/twitter-public-access-restricted/index.html">Twitter isn’t letting users view the site without logging in</a> recently.</p>
