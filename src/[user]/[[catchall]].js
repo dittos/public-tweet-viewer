@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio';
 import { h } from 'preact';
 import { renderToStaticMarkup } from 'preact-render-to-string';
 
-function render(oembedResponse) {
+function render(oembedResponse, photos) {
 	const $ = cheerio.load(oembedResponse.html)
 	const contentEl = $('.twitter-tweet p')
 	contentEl.find('br').replaceWith(' ')
@@ -20,6 +20,7 @@ function render(oembedResponse) {
 			h("meta", {property: "og:site_name", content: "Twitter"}),
 			h("meta", {property: "og:title", content: oembedResponse.author_name}),
 			h("meta", {property: "og:description", content: content}),
+			...photos.map(it => h("meta", {property: "og:image", content: it})),
 		])}
 		<style>
 			.guide {
@@ -44,6 +45,22 @@ function render(oembedResponse) {
 </html>`
 }
 
+export async function getPhotos(url) {
+	const matches = Array.from(url.matchAll(/([0-9]+)/g))
+	if (matches.length === 0) {
+		return []
+	}
+	const tweetId = matches[matches.length - 1][0]
+	const syndiUrl = `https://cdn.syndication.twimg.com/tweet-result?id=${tweetId}`
+	const response = await fetch(syndiUrl, {
+		headers: {
+			'user-agent': 'public-tweet-viewer/0.1'
+		}
+	})
+	const tweetResponse = await response.json()
+	return tweetResponse.photos?.map(it => it.url) || []
+}
+
 export async function onRequest(context) {
 	let url = context.params.catchall || []
 	url = [context.params.user].concat(url)
@@ -52,10 +69,19 @@ export async function onRequest(context) {
 		url = 'twitter.com/' + url
 	}
 	url = 'https://' + url
+
+	const photosPromise = getPhotos(url)
+
 	const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&align=center`
 	const response = await fetch(oembedUrl)
 	const oembedResponse = await response.json()
-	return new Response(render(oembedResponse), {
+	let photos = []
+	try {
+		photos = await photosPromise
+	} catch (e) {
+		console.error(e)
+	}
+	return new Response(render(oembedResponse, photos), {
 		headers: {
 			'content-type': 'text/html',
 		}
