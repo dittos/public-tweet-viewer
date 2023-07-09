@@ -70,6 +70,13 @@ export async function onRequest(context) {
 	}
 	url = 'https://' + url
 
+	return new Response(null, {
+		status: 302,
+		headers: {
+			'location': url,
+		}
+	})
+
 	const photosPromise = getPhotos(url)
 
 	const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&align=center`
